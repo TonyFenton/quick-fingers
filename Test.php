@@ -14,9 +14,9 @@ class Test extends TestCase
     {
         $this->createTestData(self::TEST_DIR);
         $this->createTestData(self::TEST_DIR, 'index.php');
+        $this->createTestData(self::IN_TEST_DIR.'public');
         $this->createTestData(self::IN_TEST_DIR.'src');
         $this->createTestData(self::IN_TEST_DIR.'var');
-        $this->createTestData(self::IN_TEST_DIR.'public');
         $this->createTestData(self::IN_TEST_DIR.'templates');
     }
 
@@ -39,6 +39,27 @@ class Test extends TestCase
             self::IN_TEST_DIR.'src_'.$today.DIRECTORY_SEPARATOR.'old.php',
             self::IN_TEST_DIR.'templates'.DIRECTORY_SEPARATOR.'old.php',
             self::IN_TEST_DIR.'var'.DIRECTORY_SEPARATOR.'old.php',
+        ];
+
+        $this->assertEquals($expected, $result);
+    }
+
+    public function test_revert()
+    {
+        $this->createTestData(self::IN_TEST_DIR.'src-new', 'new.php');
+        $this->createTestData(self::IN_TEST_DIR.'www-new', 'new.php');
+
+        $result = $this->execScript('Abort, reverted to the initial state. Can not rename "www".', ['-new', '-old']);
+
+        $expected = [
+            self::IN_TEST_DIR.'index.php',
+            self::IN_TEST_DIR.'old.php',
+            self::IN_TEST_DIR.'public'.DIRECTORY_SEPARATOR.'old.php',
+            self::IN_TEST_DIR.'src'.DIRECTORY_SEPARATOR.'old.php',
+            self::IN_TEST_DIR.'src-new'.DIRECTORY_SEPARATOR.'new.php',
+            self::IN_TEST_DIR.'templates'.DIRECTORY_SEPARATOR.'old.php',
+            self::IN_TEST_DIR.'var'.DIRECTORY_SEPARATOR.'old.php',
+            self::IN_TEST_DIR.'www-new'.DIRECTORY_SEPARATOR.'new.php',
         ];
 
         $this->assertEquals($expected, $result);
@@ -77,13 +98,13 @@ class Test extends TestCase
         fopen($dir.DIRECTORY_SEPARATOR.$file, 'w');
     }
 
-    private function execScript(string $expectedOutput): array
+    private function execScript(string $expectedOutput, array $params = []): array
     {
         copy(self::SCRIPT, self::IN_TEST_DIR.self::SCRIPT);
         chdir(self::TEST_DIR);
         $output = [];
-        exec('php '.self::SCRIPT, $output);
-        $this->assertSame($expectedOutput, $output[0]);
+        exec('php '.self::SCRIPT.' '.implode(' ', $params), $output);
+        $this->assertSame($expectedOutput, $output[count($output) - 1]);
         chdir('..');
         unlink(self::IN_TEST_DIR.self::SCRIPT);
 
