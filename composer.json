@@ -1,0 +1,17 @@
+{
+    "name": "tonyfenton/quick_fingers",
+    "description": "Rename files quickly",
+    "type": "project",
+	"require": {
+        "php": "^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "6.4"
+    },
+    "authors": [
+        {
+            "name": "TonyFenton",
+            "email": "tony.fenton3@gmail.com"
+        }
+    ]
+}
