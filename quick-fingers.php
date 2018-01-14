@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * https://github.com/TonyFenton/quick-fingers
+ */
+
 $quickFingers = new QuickFingers(
     $argc > 2 ? $argv[2] : '_'.date('Y-m-d'),
     $argc > 1 ? $argv[1] : '__'
